@@ -318,3 +318,55 @@ func TestCreateProviderReturnsCodexProviderForOpenAIOAuth(t *testing.T) {
 	// which is not yet implemented in the new factory_provider.go
 	t.Skip("OpenAI OAuth via model_list not yet implemented")
 }
+
+func TestCreateProvider_PicksImplicitModelWhenDefaultEmpty(t *testing.T) {
+	cfg := config.DefaultConfig()
+	cfg.Agents.Defaults.Model = ""
+	cfg.Agents.Defaults.ModelName = ""
+	cfg.ModelList = []config.ModelConfig{
+		{
+			ModelName: "requires-key",
+			Model:     "openai/gpt-5.2",
+			APIKey:    "",
+		},
+		{
+			ModelName: "usable",
+			Model:     "openrouter/auto",
+			APIKey:    "sk-or-test",
+			APIBase:   "https://openrouter.ai/api/v1",
+		},
+	}
+
+	provider, modelID, err := CreateProvider(cfg)
+	if err != nil {
+		t.Fatalf("CreateProvider() error = %v", err)
+	}
+
+	if _, ok := provider.(*HTTPProvider); !ok {
+		t.Fatalf("provider type = %T, want *HTTPProvider", provider)
+	}
+	if modelID != "auto" {
+		t.Fatalf("modelID = %q, want %q", modelID, "auto")
+	}
+}
+
+func TestCreateProvider_ReturnsHelpfulErrorWhenDefaultEmptyAndNoUsableModels(t *testing.T) {
+	cfg := config.DefaultConfig()
+	cfg.Agents.Defaults.Model = ""
+	cfg.Agents.Defaults.ModelName = ""
+	cfg.ModelList = []config.ModelConfig{
+		{
+			ModelName: "a",
+			Model:     "openai/gpt-5.2",
+			APIKey:    "",
+		},
+	}
+
+	_, _, err := CreateProvider(cfg)
+	if err == nil {
+		t.Fatal("CreateProvider() expected error")
+	}
+	if !strings.Contains(err.Error(), "no default model configured") {
+		t.Fatalf("error = %q, want substring %q", err.Error(), "no default model configured")
+	}
+}

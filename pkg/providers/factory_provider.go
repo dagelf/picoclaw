@@ -144,14 +144,22 @@ func CreateProviderFromConfig(cfg *config.ModelConfig) (LLMProvider, string, err
 		if workspace == "" {
 			workspace = "."
 		}
-		return NewClaudeCliProvider(workspace), modelID, nil
+		command := ""
+		if cfg.CLI != nil {
+			command = cfg.CLI.Command
+		}
+		return NewClaudeCliProviderWithCommand(workspace, command), modelID, nil
 
 	case "codex-cli", "codexcli":
 		workspace := cfg.Workspace
 		if workspace == "" {
 			workspace = "."
 		}
-		return NewCodexCliProvider(workspace), modelID, nil
+		command := ""
+		if cfg.CLI != nil {
+			command = cfg.CLI.Command
+		}
+		return NewCodexCliProviderWithCommand(workspace, command), modelID, nil
 
 	case "github-copilot", "copilot":
 		apiBase := cfg.APIBase

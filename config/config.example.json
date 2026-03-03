@@ -33,6 +33,14 @@
       "api_key": "sk-your-deepseek-key"
     },
     {
+      "model_name": "qoder-local",
+      "model": "codex-cli/codex-4",
+      "workspace": "~/.picoclaw/workspace",
+      "cli": {
+        "command": "qodercli"
+      }
+    },
+    {
       "model_name": "loadbalanced-gpt4",
       "model": "openai/gpt-5.2",
       "api_key": "sk-key1",

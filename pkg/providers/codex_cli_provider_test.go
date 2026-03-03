@@ -396,6 +396,18 @@ func TestCodexCliProvider_GetDefaultModel(t *testing.T) {
 	}
 }
 
+func TestCodexCliProvider_CommandConfig(t *testing.T) {
+	p := NewCodexCliProviderWithCommand("", "qodercli")
+	if p.command != "qodercli" {
+		t.Fatalf("command = %q, want %q", p.command, "qodercli")
+	}
+
+	p = NewCodexCliProviderWithCommand("", "")
+	if p.command != "codex" {
+		t.Fatalf("default command = %q, want %q", p.command, "codex")
+	}
+}
+
 // --- Mock CLI Integration Test ---
 
 func createMockCodexCLI(t *testing.T, events []string) string {

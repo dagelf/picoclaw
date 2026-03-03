@@ -116,6 +116,21 @@ func TestNewClaudeCliProvider_EmptyWorkspace(t *testing.T) {
 	}
 }
 
+func TestNewClaudeCliProvider_WithCustomCommand(t *testing.T) {
+	p := NewClaudeCliProviderWithCommand("/test/workspace", "claude-alt")
+	if p.workspace != "/test/workspace" {
+		t.Errorf("workspace = %q, want %q", p.workspace, "/test/workspace")
+	}
+	if p.command != "claude-alt" {
+		t.Errorf("command = %q, want %q", p.command, "claude-alt")
+	}
+
+	p = NewClaudeCliProviderWithCommand("/test/workspace", "")
+	if p.command != "claude" {
+		t.Errorf("default command = %q, want %q", p.command, "claude")
+	}
+}
+
 // --- GetDefaultModel tests ---
 
 func TestClaudeCliProvider_GetDefaultModel(t *testing.T) {

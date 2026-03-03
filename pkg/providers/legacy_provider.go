@@ -7,6 +7,7 @@ package providers
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/sipeed/picoclaw/pkg/config"
 )
@@ -40,6 +41,15 @@ func CreateProvider(cfg *config.Config) (LLMProvider, string, error) {
 		return nil, "", fmt.Errorf("no providers configured. Please add entries to model_list in your config")
 	}
 
+	// If no default model is configured, pick the first usable model from model_list.
+	// This keeps legacy/provider-only configs working without requiring explicit model_name.
+	if strings.TrimSpace(model) == "" {
+		model = pickImplicitModelName(cfg.ModelList)
+		if model == "" {
+			return nil, "", fmt.Errorf("no default model configured. Set agents.defaults.model_name (or agents.defaults.model) to a model_name from model_list")
+		}
+	}
+
 	// Get model config from model_list
 	modelCfg, err := cfg.GetModelConfig(model)
 	if err != nil {
@@ -58,4 +68,33 @@ func CreateProvider(cfg *config.Config) (LLMProvider, string, error) {
 	}
 
 	return provider, modelID, nil
+}
+
+func pickImplicitModelName(modelList []config.ModelConfig) string {
+	for i := range modelList {
+		if isImplicitlyUsableModel(modelList[i]) {
+			return modelList[i].ModelName
+		}
+	}
+	return ""
+}
+
+func isImplicitlyUsableModel(modelCfg config.ModelConfig) bool {
+	if strings.TrimSpace(modelCfg.ModelName) == "" || strings.TrimSpace(modelCfg.Model) == "" {
+		return false
+	}
+
+	if strings.TrimSpace(modelCfg.APIKey) != "" ||
+		strings.TrimSpace(modelCfg.AuthMethod) != "" ||
+		strings.TrimSpace(modelCfg.ConnectMode) != "" {
+		return true
+	}
+
+	protocol, _ := ExtractProtocol(modelCfg.Model)
+	switch protocol {
+	case "antigravity", "claude-cli", "claudecli", "codex-cli", "codexcli", "github-copilot", "copilot":
+		return true
+	default:
+		return false
+	}
 }

@@ -1041,6 +1041,19 @@ This design also enables **multi-agent support** with flexible provider selectio
 }
 ```
 
+**Codex-compatible CLI (`qodercli`)**
+
+```json
+{
+  "model_name": "qoder-local",
+  "model": "codex-cli/codex-4",
+  "workspace": "~/.picoclaw/workspace",
+  "cli": {
+    "command": "qodercli"
+  }
+}
+```
+
 **Custom Proxy/API**
 
 ```json

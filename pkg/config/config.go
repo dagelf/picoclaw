@@ -478,6 +478,10 @@ type OpenAIProviderConfig struct {
 	WebSearch bool `json:"web_search" env:"PICOCLAW_PROVIDERS_OPENAI_WEB_SEARCH"`
 }
 
+type CLIModelConfig struct {
+	Command string `json:"command,omitempty"` // CLI binary name/path (e.g., "codex", "qodercli")
+}
+
 // ModelConfig represents a model-centric provider configuration.
 // It allows adding new providers (especially OpenAI-compatible ones) via configuration only.
 // The model field uses protocol prefix format: [protocol/]model-identifier
@@ -494,9 +498,10 @@ type ModelConfig struct {
 	Proxy   string `json:"proxy,omitempty"`    // HTTP proxy URL
 
 	// Special providers (CLI-based, OAuth, etc.)
-	AuthMethod  string `json:"auth_method,omitempty"`  // Authentication method: oauth, token
-	ConnectMode string `json:"connect_mode,omitempty"` // Connection mode: stdio, grpc
-	Workspace   string `json:"workspace,omitempty"`    // Workspace path for CLI-based providers
+	AuthMethod  string          `json:"auth_method,omitempty"`  // Authentication method: oauth, token
+	ConnectMode string          `json:"connect_mode,omitempty"` // Connection mode: stdio, grpc
+	Workspace   string          `json:"workspace,omitempty"`    // Workspace path for CLI-based providers
+	CLI         *CLIModelConfig `json:"cli,omitempty"`          // Optional CLI provider settings
 
 	// Optional optimizations
 	RPM            int    `json:"rpm,omitempty"`              // Requests per minute limit

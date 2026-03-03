@@ -17,8 +17,17 @@ type ClaudeCliProvider struct {
 
 // NewClaudeCliProvider creates a new Claude CLI provider.
 func NewClaudeCliProvider(workspace string) *ClaudeCliProvider {
+	return NewClaudeCliProviderWithCommand(workspace, "")
+}
+
+// NewClaudeCliProviderWithCommand creates a new Claude CLI provider with an explicit CLI command.
+// If command is empty, it defaults to "claude".
+func NewClaudeCliProviderWithCommand(workspace, command string) *ClaudeCliProvider {
+	if strings.TrimSpace(command) == "" {
+		command = "claude"
+	}
 	return &ClaudeCliProvider{
-		command:   "claude",
+		command:   command,
 		workspace: workspace,
 	}
 }

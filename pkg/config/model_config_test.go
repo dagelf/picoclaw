@@ -398,3 +398,25 @@ func TestModelConfig_RequestTimeoutDefaultZeroValue(t *testing.T) {
 		t.Fatalf("RequestTimeout = %d, want 0", cfg.RequestTimeout)
 	}
 }
+
+func TestModelConfig_CLICommandParsing(t *testing.T) {
+	jsonData := `{
+		"model_name": "qoder-local",
+		"model": "codex-cli/codex-4",
+		"workspace": "/tmp/ws",
+		"cli": {
+			"command": "qodercli"
+		}
+	}`
+
+	var cfg ModelConfig
+	if err := json.Unmarshal([]byte(jsonData), &cfg); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
+	if cfg.CLI == nil {
+		t.Fatal("CLI should not be nil")
+	}
+	if cfg.CLI.Command != "qodercli" {
+		t.Fatalf("CLI.Command = %q, want %q", cfg.CLI.Command, "qodercli")
+	}
+}

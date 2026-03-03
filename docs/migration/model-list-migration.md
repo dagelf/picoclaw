@@ -115,11 +115,27 @@ The `model` field uses a protocol prefix format: `[protocol/]model-identifier`
 | `proxy` | No | HTTP proxy URL |
 | `auth_method` | No | Authentication method: `oauth`, `token` |
 | `connect_mode` | No | Connection mode for CLI providers: `stdio`, `grpc` |
+| `cli.command` | No | Override CLI binary for CLI providers (e.g., `qodercli`) |
 | `rpm` | No | Requests per minute limit |
 | `max_tokens_field` | No | Field name for max tokens |
 | `request_timeout` | No | HTTP request timeout in seconds; `<=0` uses default `120s` |
 
 *`api_key` is required for HTTP-based protocols unless `api_base` points to a local server.
+
+### CLI Binary Override Example
+
+If you use a Codex-compatible CLI with a different executable name:
+
+```json
+{
+  "model_name": "qoder-local",
+  "model": "codex-cli/codex-4",
+  "workspace": "/path/to/workspace",
+  "cli": {
+    "command": "qodercli"
+  }
+}
+```
 
 ## Load Balancing
 

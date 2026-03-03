@@ -18,8 +18,17 @@ type CodexCliProvider struct {
 
 // NewCodexCliProvider creates a new Codex CLI provider.
 func NewCodexCliProvider(workspace string) *CodexCliProvider {
+	return NewCodexCliProviderWithCommand(workspace, "")
+}
+
+// NewCodexCliProviderWithCommand creates a new Codex CLI provider with an explicit CLI command.
+// If command is empty, it defaults to "codex".
+func NewCodexCliProviderWithCommand(workspace, command string) *CodexCliProvider {
+	if strings.TrimSpace(command) == "" {
+		command = "codex"
+	}
 	return &CodexCliProvider{
-		command:   "codex",
+		command:   command,
 		workspace: workspace,
 	}
 }

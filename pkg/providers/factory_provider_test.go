@@ -234,6 +234,48 @@ func TestCreateProviderFromConfig_CodexCLI(t *testing.T) {
 	}
 }
 
+func TestCreateProviderFromConfig_CodexCLICustomCommand(t *testing.T) {
+	cfg := &config.ModelConfig{
+		ModelName: "test-codex-cli-custom-cmd",
+		Model:     "codex-cli/codex",
+		CLI:       &config.CLIModelConfig{Command: "qodercli"},
+	}
+
+	provider, _, err := CreateProviderFromConfig(cfg)
+	if err != nil {
+		t.Fatalf("CreateProviderFromConfig() error = %v", err)
+	}
+
+	codexProvider, ok := provider.(*CodexCliProvider)
+	if !ok {
+		t.Fatalf("provider type = %T, want *CodexCliProvider", provider)
+	}
+	if codexProvider.command != "qodercli" {
+		t.Fatalf("command = %q, want %q", codexProvider.command, "qodercli")
+	}
+}
+
+func TestCreateProviderFromConfig_ClaudeCLICustomCommand(t *testing.T) {
+	cfg := &config.ModelConfig{
+		ModelName: "test-claude-cli-custom-cmd",
+		Model:     "claude-cli/claude-sonnet-4.6",
+		CLI:       &config.CLIModelConfig{Command: "claude-alt"},
+	}
+
+	provider, _, err := CreateProviderFromConfig(cfg)
+	if err != nil {
+		t.Fatalf("CreateProviderFromConfig() error = %v", err)
+	}
+
+	claudeProvider, ok := provider.(*ClaudeCliProvider)
+	if !ok {
+		t.Fatalf("provider type = %T, want *ClaudeCliProvider", provider)
+	}
+	if claudeProvider.command != "claude-alt" {
+		t.Fatalf("command = %q, want %q", claudeProvider.command, "claude-alt")
+	}
+}
+
 func TestCreateProviderFromConfig_MissingAPIKey(t *testing.T) {
 	cfg := &config.ModelConfig{
 		ModelName: "test-no-key",
